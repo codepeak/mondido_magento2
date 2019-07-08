@@ -47,12 +47,13 @@ class Success extends \Magento\Framework\App\Action\Action
     }
     //phpcs:disable
     /**
-     * Execute
+     * Not handled today
      *
-     * @return \Magento\Framework\Controller\Result\Json
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface|void
      */
     public function execute()
     {
+        // TODO: Implement execute() method.
     }
     //phpcs:enable
 }
