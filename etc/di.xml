@@ -12,6 +12,9 @@
     <type name="Magento\Checkout\Model\DefaultConfigProvider">
         <plugin name="get_checkout_url_from_default_config_provider_model" type="Mondido\Mondido\Plugin\Model\DefaultConfigProvider"/>
     </type>
+    <type name="Magento\Framework\App\Request\CsrfValidator">
+        <plugin name="csrf_validator_skip" type="Mondido\Mondido\Plugin\CsrfValidatorSkip" />
+    </type>
     <preference for="Mondido\Mondido\Api\TransactionManagementInterface" type="Mondido\Mondido\Model\TransactionManagement"/>
     <preference for="Mondido\Mondido\Api\GuestTransactionManagementInterface" type="Mondido\Mondido\Model\GuestTransactionManagement"/>
 </config>
