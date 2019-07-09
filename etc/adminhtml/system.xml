@@ -45,11 +45,11 @@
                             <label>Merchant ID</label>
                             <config_path>payment/mondido/merchant_id</config_path>
                         </field>
-                        <field id="password" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <field id="password" type="password" translate="label" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                             <label>API Password</label>
                             <config_path>payment/mondido/password</config_path>
                         </field>
-                        <field id="secret" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
+                        <field id="secret" type="password" translate="label" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                             <label>Secret</label>
                             <config_path>payment/mondido/secret</config_path>
                         </field>
