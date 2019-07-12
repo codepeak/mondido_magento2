@@ -1,49 +1,47 @@
-# Mondido payment module for Magento 2
+Mondido payments
+==============================
+Magento 2 module version 2.3.1
 
-[Signup for a free account](https://www.mondido.com/en/signup) or [check out the documentation](https://doc.mondido.com) over at [mondido.com](https://www.mondido.com/en).
+FAQ: https://github.com/Mondido/magento2
 
-## Installation
+The Mondido Magento 2 module supports multiple payment methods such as Cards, Invoice, Direct Bank, PayPal and Swish.
 
-Manually add `"mondido/magento2-mondido": "dev-master"` to the `require` node in your project's `composer.json`. Next add the following to the `repositories` node:
+## Configuration of Module
+To configure the module, you can find it in your administration panel. 
 
-```
-    {
-        "type": "vcs",
-        "url": "https://github.com/Mondido/magento2"
-    }
-```
+1.Go to: Stores – Configuration
 
-Then run the following commands
+![Step 1](Screenshots/screenshot1.png)
 
-`$ composer update`
+2.Go to: Sales – Payment Methods
 
-`$ bin/magento module:enable Mondido_Mondido`
+![Step 2](Screenshots/screenshot2.png)
 
-`$ bin/magento setup:upgrade`
+3.Scroll down to the bottom and activate by configure 
 
-`$ bin/magento setup:static-content:deploy`
+![Step 3](Screenshots/screenshot3.png)
 
-`$ bin/magento setup:di:compile`
+4.If you already has an account for your payment, you can login to get this settings. If you don’t have any, you can sign up for an new account.
 
-## Limitations
+![Step 4](Screenshots/screenshot4.png)
+<pre>
+Enable this Solution: Yes [Active] 
+                      No [Not active] 
+                      
+Merchant ID: Your identification for your shop, this will be given to you by your Payment Provider
 
-### Shipping and billing address
+API Password: You will find this through your payment provider, this will be given to you by your Payment Provider
 
-Address information will be collected by Mondido Payments in the embedded iframe and sent to Magento in a webhook. Any information missing when the order is supposed to be created in the webhook needs to be fixed in the iframe first.
+Secret: You will find this through your payment provider, this will be given to you by your Payment Provider
 
-### Shipping methods
-
-For now, the only supported shipping method is the flat rate shipping method. Use shopping cart promotions if free shipping is needed.
-
-### Tracking on success page
-
-We can't guarantee that the webhook has fired and that the order has been created when the customer reaches the success page. Instead of tracking data from the order object, try tracking information directly from the quote.
-
-### Partial capturing
-
-Partial capturing will be added in a future version when the Mondido API supports it.
-
-## Support
-
-Please, feel free to [create issues on our GitHub repository](https://github.com/Mondido/magento2/issues). Contact hello@mondido.com if you have specific problems for your account. 
-
+Test Mode: Yes [Shall be active if you want to test your payment function. The use of test cards is only allowed]
+           No [Shall not be active if you don’t allow testing your payment function]
+           
+Payment Action: Authorize - Money will be reserved
+                Authorize and Capture - Money will be captured instantly
+                
+Deactivate quote on callback: Yes [this will deactivate the quote when user gets back to store, recommended]
+                              No [do not modify the quote when user gets back, assume payment provider call has deactivated the quote]
+                              
+Email webhook failures to: E-mail address for all information about failed payments
+</pre>
