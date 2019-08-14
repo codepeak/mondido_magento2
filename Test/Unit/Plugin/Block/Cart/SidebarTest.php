@@ -13,7 +13,8 @@
 
 namespace Mondido\Mondido\Test\Unit\Plugin\Block\Cart;
 
-use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
+use Mondido\Mondido\Test\Unit\PaymentPspObjectManager as ObjectManager;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * SidebarTest
@@ -26,12 +27,22 @@ use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
  */
 class SidebarTest extends \PHPUnit\Framework\TestCase
 {
-    protected $object;
-
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManager;
+
+    /** @var \Magento\Framework\UrlInterface | MockObject */
+    protected $urlBuilderMock;
+
+    /** @var  \Mondido\Mondido\Model\Config | MockObject */
+    protected $configMock;
+
+    /** @var \Magento\Checkout\Block\Cart\Sidebar | MockObject */
+    protected $originalSidebarMock;
+
+    /** @var \Mondido\Mondido\Plugin\Block\Cart\Sidebar | MockObject */
+    protected $sidebarMock;
 
     /**
      * Set up
@@ -41,19 +52,49 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->object = $this->objectManager->getObject(
-            'Mondido\Mondido\Plugin\Block\Cart\Sidebar'
-        );
+
+        $this->urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->configMock = $this->getMockBuilder(\Mondido\Mondido\Model\Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->originalSidebarMock = $this->getMockBuilder(\Magento\Checkout\Block\Cart\Sidebar::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->sidebarMock = $this->getMockBuilder(
+            \Mondido\Mondido\Plugin\Block\Cart\Sidebar::class
+        )->setConstructorArgs([
+            'urlBuilder' => $this->urlBuilderMock,
+            'config' => $this->configMock,
+
+        ])
+            ->setMethodsExcept(
+                [
+                    'afterGetCheckoutUrl',
+                ]
+            )
+            ->getMock();
     }
 
     /**
-     * Test execute
-     *
-     * @return void
+     * Test if config is not active ( method - afterGetCheckoutUrl )
      */
-    public function testExecute()
+    public function testAfterGetCheckoutUrlIfConfigIsNotActive()
     {
-        $this->assertEquals(get_class($this->object), 'Mondido\Mondido\Plugin\Block\Cart\Sidebar');
+        $this->configMock->method('isActive')->willReturn(false);
+        $this->assertEquals('string',$this->sidebarMock->afterGetCheckoutUrl($this->originalSidebarMock,'string'));
+    }
+
+    /**
+     * Success test afterGetCheckoutUrl ( method - afterGetCheckoutUrl )
+     */
+    public function testAfterGetCheckoutUrl()
+    {
+        $this->configMock->method('isActive')->willReturn(true);
+        $this->urlBuilderMock->method('getUrl')->with('mondido/checkout')->willReturn('test');
+        $this->assertEquals('test',$this->sidebarMock->afterGetCheckoutUrl($this->originalSidebarMock,'string'));
     }
 
     /**
@@ -63,7 +104,10 @@ class SidebarTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown()
     {
-        $this->object = null;
         $this->objectManager = null;
+        $this->urlBuilderMock = null;
+        $this->configMock = null;
+        $this->originalSidebarMock = null;
+        $this->sidebarMock = null;
     }
 }

@@ -13,7 +13,8 @@
 
 namespace Mondido\Mondido\Test\Unit\Block;
 
-use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
+use Mondido\Mondido\Test\Unit\PaymentPspObjectManager as ObjectManager;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * RegistrationTest
@@ -26,12 +27,15 @@ use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
  */
 class RegistrationTest extends \PHPUnit\Framework\TestCase
 {
-    protected $object;
-
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManager;
+
+    /**
+     * @var \Mondido\Mondido\Block\Registration | MockObject
+     */
+    protected $registrationMock;
 
     /**
      * Set up
@@ -41,19 +45,22 @@ class RegistrationTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->object = $this->objectManager->getObject(
-            'Mondido\Mondido\Block\Registration'
-        );
+
+        $this->registrationMock = $this->getMockBuilder(
+            \Mondido\Mondido\Block\Registration::class)
+            ->setMethodsExcept(['toHtml'])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
-     * Test execute
+     * Test toHtml method
      *
      * @return void
      */
-    public function testExecute()
+    public function testToHtml()
     {
-        $this->assertEquals(get_class($this->object), 'Mondido\Mondido\Block\Registration');
+        $this->assertEquals('', $this->registrationMock->toHtml());
     }
 
     /**
@@ -63,7 +70,7 @@ class RegistrationTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown()
     {
-        $this->object = null;
         $this->objectManager = null;
+        $this->registrationMock = null;
     }
 }

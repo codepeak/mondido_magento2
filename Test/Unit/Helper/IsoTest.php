@@ -13,28 +13,27 @@
 
 namespace Mondido\Mondido\Test\Unit\Helper;
 
-use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
+use Mondido\Mondido\Test\Unit\PaymentPspObjectManager as ObjectManager;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * Data helper test
  *
  * @category Mondido
  * @package  Mondido_Mondido
- * @author   Robert Lord <robert@codepeak.se>
+ * @author   Andreas Karlsson <andreas@kodbruket.se>
  * @license  MIT License https://opensource.org/licenses/MIT
  * @link     https://www.mondido.com
  */
 class IsoTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Mondido\Mondido\Helper\Iso
-     */
-    protected $object;
-
-    /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManager;
+
+    /** @var \Mondido\Mondido\Helper\Iso | MockObject */
+    protected $isoMock;
 
     /**
      * Set up
@@ -43,8 +42,16 @@ class IsoTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
-        $this->object = $objectManager->getObject('Mondido\Mondido\Helper\Iso');
+        $this->objectManager = new ObjectManager($this);
+        $this->isoMock = $this->getMockBuilder(\Mondido\Mondido\Helper\Iso::class)
+            ->setMethodsExcept(
+                [
+                    'convertFromAlpha2',
+                    'getTranslateArray'
+                ]
+            )
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
@@ -54,19 +61,8 @@ class IsoTest extends \PHPUnit\Framework\TestCase
      */
     public function testTranslateArray()
     {
-        $resultDataSet = $this->object->getTranslateArray();
+        $resultDataSet = $this->isoMock->getTranslateArray();
         $this->assertTrue(is_array($resultDataSet));
-    }
-
-    /**
-     * Test the transform function
-     *
-     * @return void
-     */
-    public function testTransformTooLongString()
-    {
-        $this->setExpectedException(\Exception::class);
-        $this->object->transform('TOLONGSTRING');
     }
 
     /**
@@ -76,7 +72,7 @@ class IsoTest extends \PHPUnit\Framework\TestCase
      */
     public function testTranslateArrayDataContent()
     {
-        foreach ($this->object->getTranslateArray() as $key => $value) {
+        foreach ($this->isoMock->getTranslateArray() as $key => $value) {
             $this->assertTrue(strlen($key) === 2);
             $this->assertTrue(strlen($value) === 3);
         }
@@ -90,6 +86,6 @@ class IsoTest extends \PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         $this->objectManager = null;
-        $this->object = null;
+        $this->isoMock = null;
     }
 }

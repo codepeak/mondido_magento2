@@ -13,7 +13,8 @@
 
 namespace Mondido\Mondido\Test\Unit\Helper;
 
-use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
+use Mondido\Mondido\Test\Unit\PaymentPspObjectManager as ObjectManager;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * Data helper test
@@ -27,14 +28,12 @@ use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
 class DataTest extends \PHPUnit\Framework\TestCase
 {
     /**
-     * @var \Mondido\Mondido\Helper\Data
-     */
-    protected $object;
-
-    /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManager;
+
+    /** @var \Mondido\Mondido\Helper\Data | MockObject */
+    protected $dataMock;
 
     /**
      * Set up
@@ -43,17 +42,27 @@ class DataTest extends \PHPUnit\Framework\TestCase
      */
     protected function setUp()
     {
-        $objectManager = new ObjectManager($this);
-        $this->object = $objectManager->getObject('Mondido\Mondido\Helper\Data');
+        $this->objectManager = new ObjectManager($this);
+
+        $this->dataMock = $this->getMockBuilder(\Mondido\Mondido\Helper\Data::class)
+            ->setMethodsExcept(['formatNumber'])
+            ->disableOriginalConstructor()
+            ->getMock();
     }
 
     /**
-     * Temp test
-     *
-     * @return void
+     * Success test for formatNumber method ( method - formatNumber )
      */
-    public function testTmp()
+    public function testFormatNumber()
     {
+        $this->assertEquals(
+            number_format(
+                5000, 2, '.', ''
+            ),
+            $this->dataMock->formatNumber(
+                5000, 2, '.', ''
+            )
+        );
     }
 
     /**
@@ -64,6 +73,5 @@ class DataTest extends \PHPUnit\Framework\TestCase
     protected function tearDown()
     {
         $this->objectManager = null;
-        $this->object = null;
     }
 }

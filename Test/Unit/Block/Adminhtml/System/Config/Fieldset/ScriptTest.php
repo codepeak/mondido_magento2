@@ -13,7 +13,8 @@
 
 namespace Mondido\Mondido\Test\Unit\Block\Adminhtml\System\Config\Fieldset;
 
-use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
+use Mondido\Mondido\Test\Unit\PaymentPspObjectManager as ObjectManager;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * ScriptTest
@@ -26,12 +27,16 @@ use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
  */
 class ScriptTest extends \PHPUnit\Framework\TestCase
 {
-    protected $object;
-
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManager;
+
+    /** @var \Mondido\Mondido\Block\Adminhtml\System\Config\Fieldset\Script | MockObject */
+    protected $scriptMock;
+
+    /** @var \Magento\Framework\Data\Form\Element\AbstractElement | MockObject */
+    protected $elementMock;
 
     /**
      * Set up
@@ -41,19 +46,27 @@ class ScriptTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->object = $this->objectManager->getObject(
-            'Mondido\Mondido\Block\Adminhtml\System\Config\Fieldset\Script'
-        );
+
+        $this->elementMock = $this->getMockBuilder(\Magento\Framework\Data\Form\Element\AbstractElement::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->scriptMock = $this->getMockBuilder(
+            \Mondido\Mondido\Block\Adminhtml\System\Config\Fieldset\Script::class
+        )
+            ->setMethodsExcept(['render'])
+            ->setMethods(['ToHtml'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
     }
 
     /**
-     * Test execute
-     *
-     * @return void
+     * Test success render ( method - render )
      */
-    public function testExecute()
+    public function testRender()
     {
-        $this->assertEquals(get_class($this->object), 'Mondido\Mondido\Block\Adminhtml\System\Config\Fieldset\Script');
+        $this->assertEquals($this->scriptMock->toHtml(),$this->scriptMock->render($this->elementMock));
     }
 
     /**
@@ -63,7 +76,8 @@ class ScriptTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown()
     {
-        $this->object = null;
         $this->objectManager = null;
+        $this->scriptMock = null;
+        $this->elementMock = null;
     }
 }
