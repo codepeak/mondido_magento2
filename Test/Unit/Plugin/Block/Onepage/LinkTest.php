@@ -13,7 +13,8 @@
 
 namespace Mondido\Mondido\Test\Unit\Plugin\Block\Onepage;
 
-use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
+use Mondido\Mondido\Test\Unit\PaymentPspObjectManager as ObjectManager;
+use PHPUnit_Framework_MockObject_MockObject as MockObject;
 
 /**
  * LinkTest
@@ -26,12 +27,22 @@ use Mondido\Mondido\Test\Unit\MondidoObjectManager as ObjectManager;
  */
 class LinkTest extends \PHPUnit\Framework\TestCase
 {
-    protected $object;
-
     /**
      * @var \Magento\Framework\TestFramework\Unit\Helper\ObjectManager
      */
     protected $objectManager;
+
+    /** @var \Magento\Framework\UrlInterface | MockObject */
+    protected $urlBuilderMock;
+
+    /** @var  \Mondido\Mondido\Model\Config | MockObject */
+    protected $configMock;
+
+    /** @var \Magento\Checkout\Block\Onepage\Link | MockObject */
+    protected $originalLinkMock;
+
+    /** @var \Mondido\Mondido\Plugin\Block\Onepage\Link | MockObject */
+    protected $linkMock;
 
     /**
      * Set up
@@ -41,19 +52,49 @@ class LinkTest extends \PHPUnit\Framework\TestCase
     protected function setUp()
     {
         $this->objectManager = new ObjectManager($this);
-        $this->object = $this->objectManager->getObject(
-            'Mondido\Mondido\Plugin\Block\Onepage\Link'
-        );
+
+        $this->urlBuilderMock = $this->getMockBuilder(\Magento\Framework\UrlInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->configMock = $this->getMockBuilder(\Mondido\Mondido\Model\Config::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->originalLinkMock = $this->getMockBuilder(\Magento\Checkout\Block\Onepage\Link::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->linkMock = $this->getMockBuilder(
+            \Mondido\Mondido\Plugin\Block\Onepage\Link::class
+        )->setConstructorArgs([
+            'urlBuilder' => $this->urlBuilderMock,
+            'config' => $this->configMock,
+
+        ])
+            ->setMethodsExcept(
+                [
+                    'afterGetCheckoutUrl',
+                ]
+            )
+            ->getMock();
     }
 
     /**
-     * Test execute
-     *
-     * @return void
+     * Test if config is not active ( method - afterGetCheckoutUrl )
      */
-    public function testExecute()
+    public function testAfterGetCheckoutUrlIfConfigIsNotActive()
     {
-        $this->assertEquals(get_class($this->object), 'Mondido\Mondido\Plugin\Block\Onepage\Link');
+        $this->configMock->method('isActive')->willReturn(false);
+        $this->assertEquals('string',$this->linkMock->afterGetCheckoutUrl($this->originalLinkMock,'string'));
+    }
+
+    /**
+     * Success test afterGetCheckoutUrl ( method - afterGetCheckoutUrl )
+     */
+    public function testAfterGetCheckoutUrl()
+    {
+        $this->configMock->method('isActive')->willReturn(true);
+        $this->urlBuilderMock->method('getUrl')->with('mondido/checkout')->willReturn('test');
+        $this->assertEquals('test',$this->linkMock->afterGetCheckoutUrl($this->originalLinkMock,'string'));
     }
 
     /**
@@ -63,7 +104,10 @@ class LinkTest extends \PHPUnit\Framework\TestCase
      */
     protected function tearDown()
     {
-        $this->object = null;
         $this->objectManager = null;
+        $this->urlBuilderMock = null;
+        $this->configMock = null;
+        $this->originalLinkMock = null;
+        $this->linkMock = null;
     }
 }

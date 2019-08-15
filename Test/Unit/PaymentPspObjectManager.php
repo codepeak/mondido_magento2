@@ -16,18 +16,18 @@ namespace Mondido\Mondido\Test\Unit;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 
 /**
- * Class MondidoObjectManager
+ * Class PaymentPspObjectManager
  *
  * @category Mondido
- * @package  Mondido\Mondido\Test\Unit
- * @author   Robert Lord, Codepeak AB <robert@codepeak.se>
+ * @package  Mondido_Mondido
+ * @author   Andreas Karlsson <andreas@kodbruket.se>
  * @license  MIT License https://opensource.org/licenses/MIT
- * @link     https://codepeak.se
+ * @link     https://www.mondido.com
  */
-class MondidoObjectManager extends ObjectManager
+class PaymentPspObjectManager extends ObjectManager
 {
     /**
-     * MondidoObjectManager constructor.
+     * PaymentPspObjectManager constructor.
      *
      * @param \PHPUnit\Framework\TestCase $testObject Object to test
      */
